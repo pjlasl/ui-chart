@@ -20,7 +20,20 @@ angular.module('ui.chart', [])
             }
           }
 
+          var callbacks = {};
+          if (!angular.isUndefined(attrs.callbacks)) {
+            callbacks = scope.$eval(attrs.callbacks);
+            if (!angular.isObject(callbacks)) {
+              throw 'Invalid ui.chart callbacks attribute';
+            }
+          }
+
           elem.jqplot(data, opts);
+
+          angular.forEach(callbacks, function(callback, eventName) {
+            elem.unbind(eventName);
+            elem.bind(eventName, callback);
+          });
         };
 
         scope.$watch(attrs.uiChart, function () {
